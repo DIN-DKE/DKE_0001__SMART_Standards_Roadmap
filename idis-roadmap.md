@@ -1,5 +1,22 @@
 ```mermaid
 
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'fontFamily': 'Noto Sans, Arial, Sans-Serif',
+      'primaryColor': '#31b4aa',
+      'primaryTextColor': '#071625',
+      'primaryBorderColor': '#2564a1',
+      'lineColor': '#d5dddc',
+      'secondaryColor': '#3a8dcb',
+      'tertiaryColor': '#fff',
+      'sectionBkgColor': '#52bdd7',
+      'altSectionBkgColor': '#d5dddc'
+    }
+  }
+}%%
+
 gantt
     dateFormat  YYYY-MM-DD
     title       IDiS Roadmap
@@ -40,7 +57,7 @@ gantt
 ```
 
 | Element                   | Timeframe              | Description                                                              | Link                                                                                   |
-|--------------------------|------------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
+|---------------------------|------------------------|--------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
 | **Authoring SPEC**        | until Apr 2025         | Specification for structured, machine-readable authoring of standards    | [dke.de/idis](https://www.dke.de/idis)                                                 |
 | **ReqIF SPEC**            | completed Feb 2025     | Definition of requirements exchange format (ReqIF)                       | [Github](https://github.com/DIN-DKE/DIN_DKE_SPEC_99200__ReqIF_interpretation_for_public_standards) |
 | **Whitepaper 3**          | completed Apr 2024     | Economic impact and value of SMART Standards                             | [Download](https://www.dke.de/resource/blob/3089126/88a04b253f37d8d7e2e42364e1d4a8c4/idis-whitepaper-3-de---download-data.pdf)     |
