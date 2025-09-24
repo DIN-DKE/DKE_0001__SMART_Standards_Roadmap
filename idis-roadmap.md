@@ -1,21 +1,5 @@
 ```mermaid
 
-%%{
-  init: {
-    'theme': 'base',
-    'themeVariables': {
-      'fontFamily': 'Noto Sans, Arial, Sans-Serif',
-      'primaryColor': '#31b4aa',
-      'primaryTextColor': '#071625',
-      'primaryBorderColor': '#2564a1',
-      'lineColor': '#d5dddc',
-      'secondaryColor': '#3a8dcb',
-      'tertiaryColor': '#fff',
-      'sectionBkgColor': '#52bdd7',
-      'altSectionBkgColor': '#d5dddc'
-    }
-  }
-}%%
 gantt
     dateFormat  YYYY-MM-DD
     title       IDiS Roadmap
@@ -52,8 +36,7 @@ gantt
     section AI/Automation
     Auto. Conformity Assess: done, 2021-07-01, 2022-10-01
     Standards LLM          : done, 2022-04-01, 2023-01-01
-    Scalable AI Assessment : active, 2024-08-01, 2025-12-31
-
+    Scalable AI Assessment : active, 2024-08-01, 2025-12-31 
 ```
 
 | Element                   | Timeframe              | Description                                                              | Link                                                                                   |
