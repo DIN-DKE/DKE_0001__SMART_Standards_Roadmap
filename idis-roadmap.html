@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="de">
 
-<head>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <script type="module" src="https://cdn.jsdelivr.net/npm/zero-md@3?register"></script>
-</head>
+<head></head>
 
 <body>
 
+
+  <script type="module" src="https://cdn.jsdelivr.net/npm/zero-md@3?register"></script>
   <!--
-  add release version to repository to load specific version of the roadmap:
-    DKE_0001__SMART_Standards_Roadmap@1.0.0
-    DKE_0001__SMART_Standards_Roadmap@1 - loads latest 1.x.x version
-    DKE_0001__SMART_Standards_Roadmap@latest - should load latest release version
-    DKE_0001__SMART_Standards_Roadmap - should load latest version
-  -->
-  <zero-md src="https://cdn.jsdelivr.net/gh/DIN-DKE/DKE_0001__SMART_Standards_Roadmap@latest/idis-roadmap.md"></zero-md>
+    add release version to repository to load specific version of the roadmap:
+      DKE_0001__SMART_Standards_Roadmap@1.0.0
+      DKE_0001__SMART_Standards_Roadmap@1 - loads latest 1.x.x version
+      DKE_0001__SMART_Standards_Roadmap@latest - should load latest release version
+      DKE_0001__SMART_Standards_Roadmap - should load latest version
+    -->
+  <zero-md src="https://cdn.jsdelivr.net/gh/DIN-DKE/DKE_0001__SMART_Standards_Roadmap@latest/idis-roadmap.md">
+    <template>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/DIN-DKE/DKE_0001__SMART_Standards_Roadmap@latest/markdown.css" />
+    </template>
+  </zero-md>
 
 </body>
 
