@@ -46,11 +46,11 @@ gantt
     section Management/<br />Delivery
     Asset Admin. Shell A   : done, 2021-09-01, 2022-09-01
     Asset Admin. Shell B   : done, 2023-09-15, 2024-06-26
-    Dataspaces             : 2026-01-01, 2027-01-01
+    Dataspaces             : 2026-07-01, 2027-07-01
 
     section Usage
-    Copyright and licensing of SMART Standards : 2025-09-01, 2027-10-01
-    SMART Standards for SMEs : 2025-08-01, 2026-08-01
+    Copyright and licensing : 2025-12-01, 2026-12-01
+    SMART Standards for SMEs : 2026-04-01, 2027-04-01
     Tagging : active, 2023-09-01, 2026-11-01
 
     section AI/Automation
@@ -61,9 +61,9 @@ gantt
 ```
 | **Element**                                       | **Status** | **Timeframe**    | **Description**                                                                                  | **Link**                                                                                                                                                 |
 | ------------------------------------------------- | ------- | -------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Group: SMART Standards for SMEs                   | 🕑      | planned for 2026     | Use SME-specific tools (self-assessments, templates) to lower entry barriers for SMART Standards | tba                                                                                                                                                  |
-| Group: Copyright and licensing of SMART Standards | 🕑      | planned for 2026     | How can transparent use and licensing of standards be ensured?                                   | tba                                                                                                                                                  |
-| Group: Dataspaces                                 | 🕑      | planned for 2026     | Serve the cross-sectoral networking of data spaces in order to provide SMART Standards           | tba                                                                                                                                                  |
+| Group: Dataspaces                                 | 🕑      | planned for 07/2026     | Serve the cross-sectoral networking of data spaces in order to provide SMART Standards           | tba                                                                                                                                                  |
+| Group: SMART Standards for SMEs                   | 🕑      | planned for 04/2026     | Use SME-specific tools (self-assessments, templates) to lower entry barriers for SMART Standards | tba                                                                                                                                                  |
+| Group: Copyright and licensing of SMART Standards | 🕑      | planned for 12/2025     | How can transparent use and licensing of standards be ensured?                                   | tba                                                                                                                                                  |
 | Group: AI-based requirement engineering           | 🕑      | planned for 11/2025 – 10/2026  | Improvement of AI-based requirements engineering using SMART Standards                           | tba                                                                                                                                                  |
 | Whitepaper 5: Scalable AI Assessment              | 🕑      | planned for 01/2026   | Scalable AI assessment with SMART Standards                                       | [Project page](https://www.dke.de/idis/pilotprojekte/smart-standards-fuer-skalierbare-ki-pruefung)                                                   |
 | Whitepaper 4: Authoring guidelines                | 🕑      | planned for 12/2025 | Authoring guidelines for provisions ("Redaktionsrichtlinien") to enhance (machine-) readability of standards                            | tba                                                                                                                                                  |
