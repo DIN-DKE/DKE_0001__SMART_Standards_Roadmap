@@ -1,3 +1,7 @@
+# IDiS Roadmap
+
+The following chart shows a timeline of completed, ongoing and planned working groups and publications that are part of the Initiative on Digital Standards (IDiS) by DIN & DKE. In the chart, working groups are mapped to a phase in the value creation process of digital standards (see [whitepaper 1](https://www.dke.de/resource/blob/2272802/facc9bde1806e2194a3d26a60c79bf77/idis-whitepaper-1-en---download-data.pdf)), with a special section for AI-related groups. The table below the chart provides further details.
+
 ```mermaid
 
 %%{
@@ -19,7 +23,7 @@
 
 gantt
     dateFormat  YYYY-MM-DD
-    title       IDiS Roadmap
+    %% title       IDiS Roadmap
     tickInterval 3month
     axisFormat %b %y
 
@@ -33,16 +37,14 @@ gantt
     Whitepaper 2 (Use cases)           : milestone, done, 2022-05-01, 1d
     Whitepaper 1 (Scenarios)           : milestone, done, 2021-06-01, 1d
 
-    section Authoring
+    section Creation
     Authoring Guidelines    : active, 2023-08-01, 2025-12-31
-
-    section Requirements
     Math. Formulas         : done, 2021-07-01, 2022-06-01
     ReqIF                  : active, 2023-08-31, 2027-12-01
     Requirements Syntax              : active, 2024-05-01, 2027-10-01
     AI-based requirements engineering :  2025-12-01, 2027-12-01
 
-    section Delivery
+    section Management/<br />Delivery
     Asset Admin. Shell A   : done, 2021-09-01, 2022-09-01
     Asset Admin. Shell B   : done, 2023-09-15, 2024-06-26
     Dataspaces             : 2026-01-01, 2027-01-01
