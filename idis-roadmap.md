@@ -42,7 +42,6 @@ gantt
     Math. Formulas         : done, 2021-07-01, 2022-06-01
     ReqIF                  : active, 2023-08-31, 2027-12-01
     Requirements Syntax              : active, 2024-05-01, 2027-10-01
-    AI-based requirements engineering :  2025-12-01, 2027-12-01
 
     section Management/<br />Delivery
     Asset Admin. Shell A   : done, 2021-09-01, 2022-09-01
@@ -57,7 +56,8 @@ gantt
     section AI/Automation
     Auto. Conformity Assess: done, 2021-07-01, 2022-10-01
     Standards LLM          : done, 2022-04-01, 2023-01-01
-    Scalable AI Assessment : active, 2024-08-01, 2025-12-31 
+    Scalable AI Assessment : active, 2024-08-01, 2025-12-31
+    AI-based requirements engineering :  2025-12-01, 2027-12-01
 ```
 | **Element**                                       | **Status** | **Timeframe**    | **Description**                                                                                  | **Link**                                                                                                                                                 |
 | ------------------------------------------------- | ------- | -------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
