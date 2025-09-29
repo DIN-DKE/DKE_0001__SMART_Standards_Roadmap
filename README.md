@@ -7,4 +7,4 @@ This repository hosts the IDiS Roadmap diagram and texts.
 
 ## Usage
 
-Edit [idis-roadmap.md](idis-roadmap.md) to update the roadmap. If the CDN-link to the markdown refers to a release (@latest or @v), create a new release.
+Edit [idis-roadmap.md](idis-roadmap.md) to update the roadmap. If the CDN-link to the markdown refers to a release (@latest or @v), create a new release. Also consider purging the CDN cache at https://www.jsdelivr.com/tools/purge.
