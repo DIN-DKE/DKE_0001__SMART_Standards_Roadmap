@@ -30,7 +30,7 @@ gantt
     section Publications
     Whitepaper 6 (Copyright and licensing) : milestone, 2026-03-31, 1d
     Whitepaper 5 (AI assessment)       : milestone, 2026-01-01, 1d
-    Whitepaper 4 (Authoring Guidelines)         : milestone, 2025-12-15, 1d
+    Whitepaper 4 (Authoring Guidelines)         : milestone, 2026-06-30, 1d
     DIN DKE SPEC 99200 - ReqIF             : milestone, done, 2025-02-15, 1d
     Whitepaper 3 (Economic benefits)           : milestone, done, 2024-04-01, 1d
     Summary - pilot projects           : milestone, done, 2023-07-01, 1d
@@ -38,7 +38,7 @@ gantt
     Whitepaper 1 (Scenarios)           : milestone, done, 2021-06-01, 1d
 
     section Creation
-    Authoring Guidelines    : active, 2023-08-01, 2025-12-31
+    Authoring Guidelines    : active, 2023-08-01, 2026-06-30
     Math. Formulas         : done, 2021-07-01, 2022-06-01
     ReqIF                  : active, 2023-08-31, 2027-12-01
     Requirements Syntax              : active, 2024-05-01, 2027-10-01
