@@ -1,11 +1,10 @@
-name: Roadmap HTML (No Puppeteer, Stable)
+name: Roadmap HTML (Stable Mermaid CLI)
 
 on:
   push:
     paths:
       - "idis-roadmap.md"
       - ".github/workflows/make_html.yml"
-      - "build/**"
   workflow_dispatch:
 
 permissions:
@@ -18,39 +17,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # ----------------------------
-      # Dependencies
-      # ----------------------------
-      - name: Install system tools
+      - name: Install system deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc python3 python3-pip curl
+          sudo apt-get install -y pandoc python3
 
-      - name: Install Python deps
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Mermaid CLI
         run: |
-          pip install beautifulsoup4
+          npm install -g @mermaid-js/mermaid-cli
 
       # ----------------------------
-      # Extract Mermaid (SAFE SCRIPT)
+      # Extract Mermaid
       # ----------------------------
-      - name: Extract Mermaid
+      - name: Extract diagrams
         run: |
           python3 build/extract_mermaid.py idis-roadmap.md build_out
 
       # ----------------------------
-      # Convert Mermaid → SVG via mermaid.ink
+      # Render with FIXED sandbox config
       # ----------------------------
-      - name: Render Mermaid via API
+      - name: Render Mermaid (FIXED)
         run: |
-          python3 build/render_mermaid.py build_out
+          for f in build_out/*.mmd; do
+            npx mmdc \
+              -i "$f" \
+              -o "$f.svg" \
+              --puppeteerConfigArgs='{"args":["--no-sandbox","--disable-setuid-sandbox"]}'
+          done
 
       # ----------------------------
-      # Markdown → HTML
+      # Pandoc
       # ----------------------------
-      - name: Pandoc HTML
+      - name: HTML build
         run: |
           mkdir -p build_out
           pandoc idis-roadmap.md \
@@ -58,21 +64,21 @@ jobs:
             --standalone
 
       # ----------------------------
-      # Inject SVG (safe DOM merge)
+      # Inject SVG
       # ----------------------------
       - name: Inject SVG
         run: |
           python3 build/inject_svg.py build_out
 
       # ----------------------------
-      # Pages output
+      # Pages
       # ----------------------------
       - name: Prepare Pages
         run: |
           mkdir -p public
           cp build_out/final.html public/index.html
 
-      - name: Upload artifact
+      - name: Upload
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
@@ -80,7 +86,6 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-
     steps:
-      - name: Deploy Pages
+      - name: Deploy
         uses: actions/deploy-pages@v4
