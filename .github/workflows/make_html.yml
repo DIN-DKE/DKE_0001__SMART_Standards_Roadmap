@@ -34,7 +34,7 @@ jobs:
             libxcomposite1 \
             libxrandr2 \
             libgbm1 \
-            libasound2
+            libasound2t64
 
       # Mermaid CLI installieren
       - name: Install Mermaid CLI
