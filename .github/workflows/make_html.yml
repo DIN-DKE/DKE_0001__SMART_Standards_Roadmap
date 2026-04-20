@@ -1,4 +1,4 @@
-name: Build Roadmap HTML with Mermaid
+name: Build Roadmap HTML with Mermaid (stable)
 
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc python3
 
-      - name: Setup Node.js (Mermaid CLI compatible)
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -38,22 +38,15 @@ jobs:
           npm install -g @mermaid-js/mermaid-cli
 
       # ----------------------------
-      # Extract Mermaid blocks
+      # Extract Mermaid blocks (SAFE VERSION)
       # ----------------------------
       - name: Extract Mermaid diagrams
         run: |
           mkdir -p build_out
-          python3 - << 'EOF'
-import re
-from pathlib import Path
-
-text = Path("idis-roadmap.md").read_text()
-
-blocks = re.findall(r"```mermaid(.*?)```", text, re.S)
-
-for i, b in enumerate(blocks):
-    Path(f"build_out/diagram{i}.mmd").write_text(b.strip())
-EOF
+          python3 -c "import re; from pathlib import Path; \
+text = Path('idis-roadmap.md').read_text(); \
+blocks = re.findall(r'''```mermaid(.*?)```''', text, re.S); \
+[Path(f'build_out/diagram{i}.mmd').write_text(b.strip()) for i,b in enumerate(blocks)]"
 
       # ----------------------------
       # Render Mermaid → SVG
@@ -74,34 +67,25 @@ EOF
             --standalone
 
       # ----------------------------
-      # Inject SVG into HTML (safe DOM merge)
+      # Inject SVG safely (DOM merge)
       # ----------------------------
       - name: Inject SVG into HTML
         run: |
-          python3 - << 'EOF'
-from bs4 import BeautifulSoup
-from pathlib import Path
-
-html = Path("build_out/base.html").read_text()
-soup = BeautifulSoup(html, "html.parser")
-
-svg_files = sorted(Path("build_out").glob("diagram*.mmd.svg"))
-code_blocks = soup.find_all("code")
-
-i = 0
-for code in code_blocks:
-    if "mermaid" in code.text:
-        if i < len(svg_files):
-            svg = svg_files[i].read_text()
-            new_svg = BeautifulSoup(svg, "html.parser")
-            code.replace_with(new_svg)
-            i += 1
-
-Path("build_out/final.html").write_text(str(soup))
-EOF
+          python3 -c "from bs4 import BeautifulSoup; from pathlib import Path; \
+html = Path('build_out/base.html').read_text(); \
+soup = BeautifulSoup(html, 'html.parser'); \
+svg_files = sorted(Path('build_out').glob('diagram*.mmd.svg')); \
+code_blocks = soup.find_all('code'); \
+i = 0; \
+for c in code_blocks: \
+    if 'mermaid' in c.text and i < len(svg_files): \
+        svg = BeautifulSoup(svg_files[i].read_text(), 'html.parser'); \
+        c.replace_with(svg); \
+        i += 1; \
+Path('build_out/final.html').write_text(str(soup))"
 
       # ----------------------------
-      # Prepare GitHub Pages
+      # Prepare Pages
       # ----------------------------
       - name: Prepare Pages output
         run: |
