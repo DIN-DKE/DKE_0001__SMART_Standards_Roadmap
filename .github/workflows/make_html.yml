@@ -1,74 +1,82 @@
-name: Build Docs with Mermaid (Stable)
-
+name: Build Docs with Mermaid (OSPRO Pipeline)
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Systemabhängigkeiten (inkl. Chromium + notwendige libs)
+      # Minimal system dependencies (no GUI bloat)
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            pandoc \
             python3 \
-            chromium-browser \
-            libnss3 \
-            libatk1.0-0 \
-            libatk-bridge2.0-0 \
-            libcups2 \
-            libxkbcommon0 \
-            libxcomposite1 \
-            libxrandr2 \
-            libgbm1 \
-            libasound2t64
+            pandoc \
+            libnss3
 
-      # Mermaid CLI installieren
+      # Install Mermaid CLI
       - name: Install Mermaid CLI
         run: npm install -g @mermaid-js/mermaid-cli
 
-      # Puppeteer-Konfiguration für CI (entscheidend!)
-      - name: Create Puppeteer config (no sandbox)
+      # Puppeteer sandbox config (required for CI)
+      - name: Create Puppeteer config
         run: |
           cat <<EOF > puppeteer-config.json
           {
-            "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+            "args": [
+              "--no-sandbox",
+              "--disable-setuid-sandbox"
+            ]
           }
           EOF
 
-      # Build-Verzeichnis
+      # Build output directory
       - name: Prepare build directory
         run: mkdir -p build/img
 
-      # Mermaid-Rendering (nutzt dein Python-Skript)
+      # Render Mermaid diagrams → SVG
       - name: Render Mermaid diagrams
-        run: |
-          export PUPPETEER_CONFIG=puppeteer-config.json
-          python3 scripts/render_mermaid.py
+        run: python3 scripts/render_mermaid.py
 
       # Markdown → HTML
-      - name: Convert Markdown to HTML
+      - name: Build HTML with Pandoc
         run: |
           pandoc build/idis-roadmap.md \
             -o build/idis-roadmap.html \
             --standalone \
             --metadata title="OSPRO Documentation"
 
-      # Deployment
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      # Upload artifact for Pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          publish_dir: build
+          path: build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+
