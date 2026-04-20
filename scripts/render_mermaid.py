@@ -4,8 +4,8 @@ import os
 import subprocess
 from pathlib import Path
 
-INPUT = "README.md"
-OUTPUT_MD = "build/processed.md"
+INPUT = "idis-roadmap.md"
+OUTPUT_MD = "build/idis-roadmap.md"
 IMG_DIR = "build/img"
 
 os.makedirs(IMG_DIR, exist_ok=True)
