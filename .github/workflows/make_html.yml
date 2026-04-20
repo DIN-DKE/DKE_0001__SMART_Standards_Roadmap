@@ -1,18 +1,23 @@
-name: Build Markdown to HTML (with Mermaid)
+name: Build & Deploy Markdown Roadmap (Stable Mermaid)
 
 on:
   push:
     paths:
       - "idis-roadmap.md"
-      - ".github/workflows/md-to-html.yml"
+      - ".github/workflows/md-to-pages.yml"
   workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Pandoc
@@ -20,34 +25,65 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc
 
-      - name: Setup Node.js
+      - name: Setup Node.js (upgrade for Mermaid CLI)
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
-      - name: Install Mermaid CLI and Pandoc Mermaid Filter
+      - name: Install Mermaid CLI
         run: |
           npm install -g @mermaid-js/mermaid-cli
-          npm install -g pandoc-mermaid-filter
 
-      - name: Convert Markdown to HTML (with Mermaid support)
+      - name: Convert Markdown → HTML (no mermaid processing)
         run: |
           pandoc idis-roadmap.md \
             -o idis-roadmap.html \
-            --from markdown \
-            --to html5 \
-            --filter pandoc-mermaid
+            --standalone
 
-      - name: Upload HTML artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: idis-roadmap-html
-          path: idis-roadmap.html
-
-      - name: Commit generated HTML (optional)
+      - name: Render Mermaid blocks to SVG
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add idis-roadmap.html
-          git commit -m "Auto-generate idis-roadmap.html from Markdown" || echo "No changes"
-          git push
+          mkdir -p mermaid-out
+
+          # Extract mermaid blocks and render them
+          awk '/```mermaid/{flag=1; i++ ; file="mermaid-out/diagram"i".mmd"; next} /```/{flag=0} flag {print > file}' idis-roadmap.md
+
+          for f in mermaid-out/*.mmd; do
+            npx mmdc -i "$f" -o "$f.svg"
+          done
+
+      - name: Inject SVG into HTML
+        run: |
+          python3 - << 'EOF'
+import re
+from pathlib import Path
+
+html = Path("idis-roadmap.html").read_text()
+
+for svg in Path("mermaid-out").glob("*.svg"):
+    mmd_file = svg.with_suffix(".mmd").read_text()
+
+    svg_content = svg.read_text()
+
+    block = "```mermaid\n" + mmd_file + "\n```"
+
+    html = html.replace(block, svg_content)
+
+Path("idis-roadmap.html").write_text(html)
+EOF
+
+      - name: Prepare Pages folder
+        run: |
+          mkdir -p public
+          mv idis-roadmap.html public/index.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: actions/deploy-pages@v4
