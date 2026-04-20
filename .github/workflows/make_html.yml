@@ -1,10 +1,10 @@
-name: Build & Deploy Markdown Roadmap (Stable Mermaid)
+name: Build Roadmap HTML with Mermaid
 
 on:
   push:
     paths:
       - "idis-roadmap.md"
-      - ".github/workflows/md-to-pages.yml"
+      - ".github/workflows/make_html.yml"
   workflow_dispatch:
 
 permissions:
@@ -17,15 +17,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
+      # ----------------------------
+      # Dependencies
+      # ----------------------------
       - name: Install Pandoc
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc
+          sudo apt-get install -y pandoc python3
 
-      - name: Setup Node.js (upgrade for Mermaid CLI)
+      - name: Setup Node.js (Mermaid CLI compatible)
         uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -34,47 +37,76 @@ jobs:
         run: |
           npm install -g @mermaid-js/mermaid-cli
 
-      - name: Convert Markdown → HTML (no mermaid processing)
+      # ----------------------------
+      # Extract Mermaid blocks
+      # ----------------------------
+      - name: Extract Mermaid diagrams
         run: |
-          pandoc idis-roadmap.md \
-            -o idis-roadmap.html \
-            --standalone
-
-      - name: Render Mermaid blocks to SVG
-        run: |
-          mkdir -p mermaid-out
-
-          # Extract mermaid blocks and render them
-          awk '/```mermaid/{flag=1; i++ ; file="mermaid-out/diagram"i".mmd"; next} /```/{flag=0} flag {print > file}' idis-roadmap.md
-
-          for f in mermaid-out/*.mmd; do
-            npx mmdc -i "$f" -o "$f.svg"
-          done
-
-      - name: Inject SVG into HTML
-        run: |
+          mkdir -p build_out
           python3 - << 'EOF'
 import re
 from pathlib import Path
 
-html = Path("idis-roadmap.html").read_text()
+text = Path("idis-roadmap.md").read_text()
 
-for svg in Path("mermaid-out").glob("*.svg"):
-    mmd_file = svg.with_suffix(".mmd").read_text()
+blocks = re.findall(r"```mermaid(.*?)```", text, re.S)
 
-    svg_content = svg.read_text()
-
-    block = "```mermaid\n" + mmd_file + "\n```"
-
-    html = html.replace(block, svg_content)
-
-Path("idis-roadmap.html").write_text(html)
+for i, b in enumerate(blocks):
+    Path(f"build_out/diagram{i}.mmd").write_text(b.strip())
 EOF
 
-      - name: Prepare Pages folder
+      # ----------------------------
+      # Render Mermaid → SVG
+      # ----------------------------
+      - name: Render Mermaid diagrams
+        run: |
+          for f in build_out/*.mmd; do
+            npx mmdc -i "$f" -o "$f.svg"
+          done
+
+      # ----------------------------
+      # Convert Markdown → HTML
+      # ----------------------------
+      - name: Pandoc conversion
+        run: |
+          pandoc idis-roadmap.md \
+            -o build_out/base.html \
+            --standalone
+
+      # ----------------------------
+      # Inject SVG into HTML (safe DOM merge)
+      # ----------------------------
+      - name: Inject SVG into HTML
+        run: |
+          python3 - << 'EOF'
+from bs4 import BeautifulSoup
+from pathlib import Path
+
+html = Path("build_out/base.html").read_text()
+soup = BeautifulSoup(html, "html.parser")
+
+svg_files = sorted(Path("build_out").glob("diagram*.mmd.svg"))
+code_blocks = soup.find_all("code")
+
+i = 0
+for code in code_blocks:
+    if "mermaid" in code.text:
+        if i < len(svg_files):
+            svg = svg_files[i].read_text()
+            new_svg = BeautifulSoup(svg, "html.parser")
+            code.replace_with(new_svg)
+            i += 1
+
+Path("build_out/final.html").write_text(str(soup))
+EOF
+
+      # ----------------------------
+      # Prepare GitHub Pages
+      # ----------------------------
+      - name: Prepare Pages output
         run: |
           mkdir -p public
-          mv idis-roadmap.html public/index.html
+          cp build_out/final.html public/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -84,6 +116,7 @@ EOF
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
