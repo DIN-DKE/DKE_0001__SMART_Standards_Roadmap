@@ -7,12 +7,12 @@ base = Path(sys.argv[1])
 html = (base / "base.html").read_text()
 soup = BeautifulSoup(html, "html.parser")
 
-svg_files = sorted(base.glob("diagram*.mmd.svg"))
+svgs = sorted(base.glob("diagram*.mmd.svg"))
 
 i = 0
 for code in soup.find_all("code"):
-    if "mermaid" in code.text and i < len(svg_files):
-        svg = BeautifulSoup(svg_files[i].read_text(), "html.parser")
+    if "mermaid" in code.text and i < len(svgs):
+        svg = BeautifulSoup(svgs[i].read_text(), "html.parser")
         code.replace_with(svg)
         i += 1
 
