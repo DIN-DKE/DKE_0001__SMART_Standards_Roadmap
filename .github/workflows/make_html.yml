@@ -1,4 +1,4 @@
-name: Build Docs with Mermaid (OSPRO Pipeline)
+name: Build Docs with Mermaid (Stable OSPRO Pipeline)
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Minimal system dependencies (no GUI bloat)
+      # Minimal system dependencies (CI-stable)
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -34,7 +34,7 @@ jobs:
       - name: Install Mermaid CLI
         run: npm install -g @mermaid-js/mermaid-cli
 
-      # Puppeteer sandbox config (required for CI)
+      # Puppeteer sandbox configuration (required for CI environments)
       - name: Create Puppeteer config
         run: |
           cat <<EOF > puppeteer-config.json
@@ -46,7 +46,7 @@ jobs:
           }
           EOF
 
-      # Build output directory
+      # Prepare build directory
       - name: Prepare build directory
         run: mkdir -p build/img
 
@@ -54,7 +54,7 @@ jobs:
       - name: Render Mermaid diagrams
         run: python3 scripts/render_mermaid.py
 
-      # Markdown → HTML
+      # Convert Markdown → HTML
       - name: Build HTML with Pandoc
         run: |
           pandoc build/idis-roadmap.md \
@@ -62,26 +62,26 @@ jobs:
             --standalone \
             --metadata title="OSPRO Documentation"
 
-      # Upload artifact for Pages
+      # Upload artifact for GitHub Pages
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: build
-  
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
 
-  permissions:
-    pages: write
-    id-token: write
+    permissions:
+      pages: write
+      id-token: write
 
-  environment:
-    name: github-pages
-    url: ${{ steps.deployment.outputs.page_url }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-  steps:
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
-
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        
