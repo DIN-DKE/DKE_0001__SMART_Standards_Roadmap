@@ -25,7 +25,7 @@ jobs:
 
       - name: Convert Markdown to HTML
         run: |
-          pandoc idis-roadmap.md -o build/idis-roadmap.html \
+          pandoc build/idis-roadmap.md -o build/idis-roadmap.html \
             --standalone \
             --metadata title="OSPRO Docs"
 
