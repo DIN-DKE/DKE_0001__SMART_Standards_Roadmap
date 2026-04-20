@@ -14,14 +14,10 @@ jobs:
       pages: write
       id-token: write
 
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Minimal system dependencies (CI-stable)
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -30,11 +26,9 @@ jobs:
             pandoc \
             libnss3
 
-      # Install Mermaid CLI
       - name: Install Mermaid CLI
         run: npm install -g @mermaid-js/mermaid-cli
 
-      # Puppeteer sandbox configuration (required for CI environments)
       - name: Create Puppeteer config
         run: |
           cat <<EOF > puppeteer-config.json
@@ -46,23 +40,20 @@ jobs:
           }
           EOF
 
-      # Prepare build directory
       - name: Prepare build directory
         run: mkdir -p build/img
 
-      # Render Mermaid diagrams → SVG
       - name: Render Mermaid diagrams
         run: python3 scripts/render_mermaid.py
 
-      # Convert Markdown → HTML
+      # 🔴 FIX: Pages expects index.html
       - name: Build HTML with Pandoc
         run: |
           pandoc build/idis-roadmap.md \
-            -o build/idis-roadmap.html \
+            -o build/index.html \
             --standalone \
             --metadata title="OSPRO Documentation"
 
-      # Upload artifact for GitHub Pages
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -78,10 +69,8 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
