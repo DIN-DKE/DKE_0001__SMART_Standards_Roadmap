@@ -1,4 +1,4 @@
-name: Roadmap HTML (Stable Mermaid CLI)
+name: Roadmap HTML (Zero Dependency Mermaid)
 
 on:
   push:
@@ -20,43 +20,39 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install system deps
+      # ----------------------------
+      # System deps only
+      # ----------------------------
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc python3
+          sudo apt-get install -y pandoc python3 nodejs npm
 
-      - name: Setup Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Install Mermaid CLI
+      # ----------------------------
+      # Install Mermaid ESM renderer (NO CHROME)
+      # ----------------------------
+      - name: Install Mermaid runtime
         run: |
-          npm install -g @mermaid-js/mermaid-cli
+          npm install mermaid
 
       # ----------------------------
-      # Extract Mermaid
+      # Extract Mermaid blocks
       # ----------------------------
-      - name: Extract diagrams
+      - name: Extract Mermaid
         run: |
           python3 build/extract_mermaid.py idis-roadmap.md build_out
 
       # ----------------------------
-      # Render with FIXED sandbox config
+      # Render Mermaid → SVG (NO PUPPETEER)
       # ----------------------------
-      - name: Render Mermaid (FIXED)
+      - name: Render Mermaid (pure JS runtime)
         run: |
-          for f in build_out/*.mmd; do
-            npx mmdc \
-              -i "$f" \
-              -o "$f.svg" \
-              --puppeteerConfigArgs='{"args":["--no-sandbox","--disable-setuid-sandbox"]}'
-          done
+          node build/render_mermaid.js
 
       # ----------------------------
-      # Pandoc
+      # Markdown → HTML
       # ----------------------------
-      - name: HTML build
+      - name: Pandoc HTML
         run: |
           mkdir -p build_out
           pandoc idis-roadmap.md \
@@ -78,7 +74,7 @@ jobs:
           mkdir -p public
           cp build_out/final.html public/index.html
 
-      - name: Upload
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
@@ -87,5 +83,4 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy
-        uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v4
