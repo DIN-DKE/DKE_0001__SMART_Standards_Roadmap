@@ -1,35 +1,71 @@
-name: Build Docs with Mermaid
+name: Build Docs with Mermaid (Stable)
 
 on:
   push:
     branches: [main]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install dependencies
+      # Systemabhängigkeiten (inkl. Chromium + notwendige libs)
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc python3 python3-pip
-          npm install -g @mermaid-js/mermaid-cli
+          sudo apt-get install -y \
+            pandoc \
+            python3 \
+            chromium-browser \
+            libnss3 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2 \
+            libxkbcommon0 \
+            libxcomposite1 \
+            libxrandr2 \
+            libgbm1 \
+            libasound2
 
-      - name: Prepare build dir
-        run: mkdir -p build
+      # Mermaid CLI installieren
+      - name: Install Mermaid CLI
+        run: npm install -g @mermaid-js/mermaid-cli
 
+      # Puppeteer-Konfiguration für CI (entscheidend!)
+      - name: Create Puppeteer config (no sandbox)
+        run: |
+          cat <<EOF > puppeteer-config.json
+          {
+            "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+          }
+          EOF
+
+      # Build-Verzeichnis
+      - name: Prepare build directory
+        run: mkdir -p build/img
+
+      # Mermaid-Rendering (nutzt dein Python-Skript)
       - name: Render Mermaid diagrams
-        run: python3 scripts/render_mermaid.py
+        run: |
+          export PUPPETEER_CONFIG=puppeteer-config.json
+          python3 scripts/render_mermaid.py
 
+      # Markdown → HTML
       - name: Convert Markdown to HTML
         run: |
-          pandoc build/idis-roadmap.md -o build/idis-roadmap.html \
+          pandoc build/idis-roadmap.md \
+            -o build/idis-roadmap.html \
             --standalone \
-            --metadata title="OSPRO Docs"
+            --metadata title="OSPRO Documentation"
 
-      - name: Deploy to Pages
+      # Deployment
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           publish_dir: build
