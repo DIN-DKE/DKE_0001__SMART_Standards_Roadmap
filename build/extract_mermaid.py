@@ -4,7 +4,7 @@ import sys
 
 md = Path(sys.argv[1]).read_text()
 out = Path(sys.argv[2])
-out.mkdir(parents=True, exist_ok=True)
+out.mkdir(exist_ok=True, parents=True)
 
 blocks = re.findall(r"```mermaid(.*?)```", md, re.S)
 
