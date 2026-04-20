@@ -1,25 +1,21 @@
-import base64
-import zlib
-from pathlib import Path
-import urllib.request
+import fs from "fs";
+import path from "path";
+import mermaid from "mermaid";
 
-def encode_mermaid(code: str) -> str:
-    compressed = zlib.compress(code.encode("utf-8"))
-    return base64.urlsafe_b64encode(compressed).decode("utf-8")
+const dir = "build_out";
 
-base = Path("build_out")
+const files = fs.readdirSync(dir).filter(f => f.endsWith(".mmd"));
 
-for f in base.glob("*.mmd"):
-    code = f.read_text()
+for (const f of files) {
+    const code = fs.readFileSync(path.join(dir, f), "utf-8");
 
-    encoded = encode_mermaid(code)
+    const { svg } = await mermaid.render(
+        "graphDiv",
+        code
+    );
 
-    url = f"https://mermaid.ink/svg/{encoded}"
-
-    out_file = f.with_suffix(".mmd.svg")
-
-    try:
-        urllib.request.urlretrieve(url, out_file)
-    except Exception as e:
-        print(f"Failed rendering {f}: {e}")
-        raise
+    fs.writeFileSync(
+        path.join(dir, f + ".svg"),
+        svg
+    );
+}
