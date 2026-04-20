@@ -57,7 +57,9 @@ jobs:
           mkdir -p build_out
           pandoc idis-roadmap.md \
             -o build_out/base.html \
-            --standalone
+            --standalone\
+            --from markdown+pipe_tables+grid_tables \
+            --to html5
 
       # ----------------------------
       # Inject SVG
