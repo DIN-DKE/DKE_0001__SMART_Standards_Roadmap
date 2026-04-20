@@ -1,4 +1,4 @@
-name: Build HTML from Markdown
+name: Build Docs with Mermaid
 
 on:
   push:
@@ -7,13 +7,29 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc python3 python3-pip
+          npm install -g @mermaid-js/mermaid-cli
+
+      - name: Prepare build dir
+        run: mkdir -p build
+
+      - name: Render Mermaid diagrams
+        run: python3 scripts/render_mermaid.py
+
       - name: Convert Markdown to HTML
         run: |
-          sudo apt-get install -y pandoc
-          pandoc README.md -f gfm -t html -o index.html
-      - name: Deploy
+          pandoc build/processed.md -o build/index.html \
+            --standalone \
+            --metadata title="OSPRO Docs"
+
+      - name: Deploy to Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          publish_dir: .
+          publish_dir: build
