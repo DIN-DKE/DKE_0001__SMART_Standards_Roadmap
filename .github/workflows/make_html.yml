@@ -1,4 +1,4 @@
-name: Build Roadmap HTML (No Puppeteer, jsdom)
+name: Build Roadmap HTML (Mermaid CLI Stable)
 
 on:
   push:
@@ -32,24 +32,30 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc python3 python3-pip
 
-      # ----------------------------
-      # Python Dependencies
-      # ----------------------------
       - name: Install Python deps
         run: |
           pip install beautifulsoup4
 
       # ----------------------------
-      # Node Setup
+      # Node Setup (wichtig: Node 22 wegen mmdc)
       # ----------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
 
-      - name: Install Mermaid + jsdom
+      - name: Install Mermaid CLI
         run: |
-          npm install mermaid jsdom
+          npm install -g @mermaid-js/mermaid-cli
+
+      # ----------------------------
+      # Puppeteer Config (FIX)
+      # ----------------------------
+      - name: Create Puppeteer config
+        run: |
+          echo '{
+            "args": ["--no-sandbox", "--disable-setuid-sandbox"]
+          }' > pptr.json
 
       # ----------------------------
       # Extract Mermaid blocks
@@ -59,11 +65,16 @@ jobs:
           python3 build/extract_mermaid.py idis-roadmap.md build_out
 
       # ----------------------------
-      # Render Mermaid via jsdom (NO Puppeteer)
+      # Render Mermaid (STABLE)
       # ----------------------------
-      - name: Render Mermaid
+      - name: Render Mermaid diagrams
         run: |
-          node build/render_mermaid.js
+          for f in build_out/*.mmd; do
+            npx mmdc \
+              -i "$f" \
+              -o "$f.svg" \
+              -p pptr.json
+          done
 
       # ----------------------------
       # Markdown → HTML
