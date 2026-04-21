@@ -1,10 +1,11 @@
-name: Roadmap HTML (Zero Dependency Mermaid)
+name: Build Roadmap HTML (No Puppeteer, jsdom)
 
 on:
   push:
     paths:
       - "idis-roadmap.md"
       - ".github/workflows/make_html.yml"
+      - "build/**"
   workflow_dispatch:
 
 permissions:
@@ -17,66 +18,81 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      # ----------------------------
+      # Checkout
+      # ----------------------------
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       # ----------------------------
-      # System deps only
+      # System Dependencies
       # ----------------------------
-      - name: Install dependencies
+      - name: Install system tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc python3 nodejs npm
+          sudo apt-get install -y pandoc python3 python3-pip
 
       # ----------------------------
-      # Install Mermaid ESM renderer (NO CHROME)
+      # Python Dependencies
       # ----------------------------
-      - name: Install Mermaid runtime
+      - name: Install Python deps
         run: |
-          npm install mermaid
+          pip install beautifulsoup4
+
+      # ----------------------------
+      # Node Setup
+      # ----------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Mermaid + jsdom
+        run: |
+          npm install mermaid jsdom
 
       # ----------------------------
       # Extract Mermaid blocks
       # ----------------------------
-      - name: Extract Mermaid
+      - name: Extract Mermaid diagrams
         run: |
           python3 build/extract_mermaid.py idis-roadmap.md build_out
 
       # ----------------------------
-      # Render Mermaid → SVG (NO PUPPETEER)
+      # Render Mermaid via jsdom (NO Puppeteer)
       # ----------------------------
-      - name: Render Mermaid (pure JS runtime)
+      - name: Render Mermaid
         run: |
           node build/render_mermaid.js
 
       # ----------------------------
       # Markdown → HTML
       # ----------------------------
-      - name: Pandoc HTML
+      - name: Pandoc conversion
         run: |
           mkdir -p build_out
           pandoc idis-roadmap.md \
             -o build_out/base.html \
-            --standalone\
+            --standalone \
             --from markdown+pipe_tables+grid_tables \
             --to html5
 
       # ----------------------------
-      # Inject SVG
+      # Inject SVG + CSS
       # ----------------------------
-      - name: Inject SVG
+      - name: Inject SVG into HTML
         run: |
           python3 build/inject_svg.py build_out
 
       # ----------------------------
-      # Pages
+      # Prepare GitHub Pages
       # ----------------------------
-      - name: Prepare Pages
+      - name: Prepare Pages output
         run: |
           mkdir -p public
           cp build_out/final.html public/index.html
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: public
@@ -84,5 +100,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
