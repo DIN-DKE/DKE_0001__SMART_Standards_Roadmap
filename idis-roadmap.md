@@ -29,7 +29,7 @@ gantt
 
     section Publications
     Whitepaper 6 (Copyright and licensing) : milestone, 2026-03-31, 1d
-    Whitepaper 5 (AI assessment)       : milestone, 2026-01-01, 1d
+    Whitepaper 5 (AI assessment)       : milestone, 2026-06-30, 1d
     Whitepaper 4 (Authoring Guidelines)         : milestone, 2026-06-30, 1d
     DIN DKE SPEC 99200 - ReqIF             : milestone, done, 2025-02-15, 1d
     Whitepaper 3 (Economic benefits)           : milestone, done, 2024-04-01, 1d
@@ -68,7 +68,7 @@ gantt
 | Whitepaper 5: Scalable AI Assessment              | 🕑      | planned for 01/2026   | Scalable AI assessment with SMART Standards                                       | [Project page](https://www.dke.de/idis/pilotprojekte/smart-standards-fuer-skalierbare-ki-pruefung)                                                   |
 | Whitepaper 4: Authoring guidelines                | 🕑      | planned for 06/2026 | Authoring guidelines for provisions ("Redaktionsrichtlinien") to enhance (machine-) readability of standards                            | tba                                                                                                                                                  |
 | Group: Requirement Syntax                         | 🏃      | running 05/2024 - 10/2026 | Syntax rules for machine-readable normative requirements                                         | tba                                                                                                                                                  |
-| Group: Scalable AI Assessment (SKIP)              | 🏃      | running 11/2024 - 11/2025 | AI-based automated conformity checking for SMART Standards                                       | [Project page](https://www.dke.de/idis/pilotprojekte/smart-standards-fuer-skalierbare-ki-pruefung)                                              
+| Group: Scalable AI Assessment (SKIP)              | 🏃      | running 11/2024 - 06/2026 | AI-based automated conformity checking for SMART Standards                                       | [Project page](https://www.dke.de/idis/pilotprojekte/smart-standards-fuer-skalierbare-ki-pruefung)                                              
 | Group: Tagging                                    | 🏃      | running 09/2023 - 11/2026 | Making relevant requirements and information findable via tags                              | tba |
 | Group: Authoring Guidelines                       | 🏃      | running 08/2023 - 06/2026    | Authoring guidelines for provisions ("Redaktionsrichtlinien")                               | tba                                                                                                                                                  |
 | Group: ReqIF                                      | 🏃      | running since 08/2023        | ReqIF™ interpretation for public standards - group ongoing for further improvements      | [Github](https://github.com/DIN-DKE/DIN_DKE_SPEC_99200__ReqIF_interpretation_for_public_standards),[presentation](https://www.dke.de/resource/blob/2385870/a9a4514d6c2ac754eb2a0a6af93f0ef7/idis-13-03d-adhoc-reqif--en--andreas-wernicke-data.pdf) |
